@@ -1,0 +1,102 @@
+sistema-controle-estoque/
+│
+├── src/                         # Código fonte
+│   ├── __init__.py             # Torna a pasta um pacote Python
+│   ├── main.py                  # Arquivo principal para execução
+│   ├── estoque.py               # Módulo para gerenciar o estoque
+│   └── produto.py               # Módulo para representar produtos
+│
+├── data/                        # Pasta para dados (se necessário)
+│   └── estoque.json             # Arquivo JSON para persistir dados do estoque
+│
+├── tests/                       # Testes automatizados
+│   └── test_estoque.py          # Testes para o módulo de estoque
+│
+├── requirements.txt             # Dependências do projeto
+├── README.md                    # Documentação do projeto
+└── .gitignore                   # Arquivo para ignorar arquivos não desejados no Git
+
+
+### Exemplo de Código
+
+#### src/produto.py
+
+python
+class Produto:
+    def __init__(self, nome, quantidade, preco):
+        self.nome = nome
+        self.quantidade = quantidade
+        self.preco = preco
+
+    def atualizar_quantidade(self, quantidade):
+        self.quantidade += quantidade
+
+    def __str__(self):
+        return f"{self.nome} - Quantidade: {self.quantidade}, Preço: R${self.preco:.2f}"
+
+
+#### src/estoque.py
+
+python
+import json
+from produto import Produto
+
+class Estoque:
+    def __init__(self):
+        self.produtos = []
+
+    def adicionar_produto(self, produto):
+        self.produtos.append(produto)
+
+    def listar_produtos(self):
+        for produto in self.produtos:
+            print(produto)
+
+    def salvar_estoque(self, arquivo):
+        with open(arquivo, 'w') as f:
+            json.dump([vars(produto) for produto in self.produtos], f)
+
+    def carregar_estoque(self, arquivo):
+        with open(arquivo, 'r') as f:
+            produtos_data = json.load(f)
+            for data in produtos_data:
+                produto = Produto(data['nome'], data['quantidade'], data['preco'])
+                self.adicionar_produto(produto)
+
+
+#### src/main.py
+
+python
+from estoque import Estoque
+from produto import Produto
+
+def main():
+    estoque = Estoque()
+
+    while True:
+        print("\n1. Adicionar Produto")
+        print("2. Listar Produtos")
+        print("3. Sair")
+        
+        opcao = input("Escolha uma opção: ")
+
+        if opcao == '1':
+            nome = input("Nome do produto: ")
+            quantidade = int(input("Quantidade: "))
+            preco = float(input("Preço: "))
+            produto = Produto(nome, quantidade, preco)
+            estoque.adicionar_produto(produto)
+            print("Produto adicionado com sucesso!")
+        
+        elif opcao == '2':
+            print("Lista de Produtos:")
+            estoque.listar_produtos()
+        
+        elif opcao == '3':
+            break
+        
+        else:
+            print("Opção inválida! Tente novamente.")
+
+if __name__ == "__main__":
+    main()
